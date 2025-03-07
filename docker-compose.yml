@@ -1,0 +1,29 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver_imobimanager
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Imobimanager2025
+    ports:
+      - "1433:1433"
+    networks:
+      - networkimobimanager
+
+  imobimanagerapi:
+    build:
+      context: ./ImobiManager
+      dockerfile: Dockerfile
+    container_name: imobimanagerApi
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=ImobiManager;User Id=sa;Password=Imobimanager2025;
+    ports:
+      - "8080:8080"
+    depends_on:
+      - sqlserver
+    networks:
+      - networkimobimanager
+
+networks:
+  networkimobimanager:
+    driver: bridge

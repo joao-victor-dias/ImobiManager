@@ -1,0 +1,50 @@
+# Diretórios e arquivos gerados pela build
+bin/
+obj/
+out/
+*.exe
+*.dll
+*.pdb
+*.appx
+*.appxbundle
+*.msix
+*.msixbundle
+*.nupkg
+*.snupkg
+
+# Logs e debug
+*.log
+*.vs/
+.vscode/
+*.user
+*.suo
+*.sln.cache
+*.sln.ide
+
+# Configurações locais e arquivos secretos
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+.env
+.env.*
+
+# Dependências e pacotes
+node_modules/
+packages/
+wwwroot/lib/
+
+# Cache do NuGet
+.nupkg
+.nuget/
+
+# Configuração de IDEs
+.idea/
+*.Rider/
+*.sln.dotSettings
+*.csproj.user
+
+# Publicação e deploy
+publish/
+wwwroot/
+wwwroot/dist/
+coverage/
