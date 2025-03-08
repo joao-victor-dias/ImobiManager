@@ -2,6 +2,7 @@
 using ImobiManager.DTO;
 using ImobiManager.Entities;
 using ImobiManager.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,12 +20,14 @@ namespace ImobiManager.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Apartament>>> GetApartaments()
         {
             return await _context.Apartaments.ToListAsync();
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Apartament>> GetApartament(int id)
         {
             if (id == null)
@@ -44,6 +47,7 @@ namespace ImobiManager.Controllers
 
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Apartament>> PostApartament([FromBody] ApartamentDto apartamentDto)
         {
             if (apartamentDto == null)
@@ -71,6 +75,7 @@ namespace ImobiManager.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutApartament(int id, ApartamentDto apartamentDto)
         {
             var apartament = new Apartament
@@ -100,6 +105,7 @@ namespace ImobiManager.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult<Apartament>> DeleteApartament(int id)
         {
             if (id == null)

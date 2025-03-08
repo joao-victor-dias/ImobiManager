@@ -1,17 +1,33 @@
+using ImobiManager.Auth;
 using ImobiManager.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
-using System.Reflection;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddSingleton<JwtService>();
 
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = "Bearer";
+    options.DefaultChallengeScheme = "Bearer";
+})
+.AddJwtBearer("Bearer", options =>
+{
+    var secretKey = builder.Configuration["JwtSettings:SecretKey"];
+    var key = Encoding.UTF8.GetBytes(secretKey);
 
-builder.Services.AddEndpointsApiExplorer();
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero,
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -21,13 +37,38 @@ builder.Services.AddSwaggerGen(options =>
         Version = "v1",
         Description = "Api para gerenciamento de vendas e reservas de apartamentos. Permite registrar, atualizar e consultar informações sobre clientes, apartamentos, reservas e transações de vendas."
     });
+
+    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Description = "Entre com o seu token JWT no formato **'Bearer {token}'**.",
+        Name = "Authorization",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey
+    });
+
+    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
 });
 
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddControllers();
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -42,54 +83,17 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
     if (dbContext.Database.EnsureCreated())
     {
         dbContext.Database.Migrate();
     }
 }
 
-//using (var scope = app.Services.CreateScope())
-//{
-//    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-//    try
-//    {
-//        // Verifica se existem migrations pendentes
-//        if (!dbContext.Database.GetMigrations().Any())
-//        {
-//            // Gera uma migration inicial automaticamente
-//            var process = new Process
-//            {
-//                StartInfo = new ProcessStartInfo
-//                {
-//                    FileName = "dotnet",
-//                    Arguments = "ef migrations add AutoMigration",
-//                    RedirectStandardOutput = true,
-//                    RedirectStandardError = true,
-//                    UseShellExecute = false,
-//                    CreateNoWindow = true
-//                }
-//            };
-
-//            process.Start();
-//            process.WaitForExit();
-//        }
-
-//        // Aplica as migrations (criando tabelas se necessário)
-//        dbContext.Database.Migrate();
-//    }
-//    catch (Exception ex)
-//    {
-//        Console.WriteLine($"Erro ao aplicar migrations: {ex.Message}");
-//    }
-//}
-
 app.UseHttpsRedirection();
 
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
-

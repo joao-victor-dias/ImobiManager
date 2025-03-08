@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using ImobiManager.Data;
 using ImobiManager.Entities;
 using ImobiManager.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ImobiManager.Controllers
 {
@@ -23,12 +24,14 @@ namespace ImobiManager.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Client>>> GetClients()
         {
             return await _context.Clients.ToListAsync();
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Client>> GetClient(int id)
         {
             if (id == null)
@@ -48,6 +51,7 @@ namespace ImobiManager.Controllers
 
        
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Client>> PostClient([FromBody] ClientDto clientDto)
         {
             if (clientDto == null)
@@ -71,6 +75,7 @@ namespace ImobiManager.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutClient(int id, ClientDto clientDto)
         {
             var client = new Client
@@ -96,6 +101,7 @@ namespace ImobiManager.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult<Client>> DeleteClient(int id)
         {
             if (id == null)

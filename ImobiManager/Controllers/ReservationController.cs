@@ -1,6 +1,7 @@
 ﻿using ImobiManager.Data;
 using ImobiManager.DTO;
 using ImobiManager.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,7 @@ namespace ImobiManager.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetReservations()
         {
             return await _context.Reservations
@@ -27,6 +29,7 @@ namespace ImobiManager.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Reservation>> GetReservation(int id)
         {
             var reservation = await _context.Reservations
@@ -43,6 +46,7 @@ namespace ImobiManager.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Reservation>> PostReservation(ReservationDto reservationDto)
         {
             var clientExists = await _context.Clients.AnyAsync(c => c.Id == reservationDto.ClientId);
@@ -67,6 +71,7 @@ namespace ImobiManager.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutReservation(int id, ReservationDto reservationDto)
         {
             var existingReservation = await _context.Reservations.FindAsync(id);
@@ -109,6 +114,7 @@ namespace ImobiManager.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteReservation(int id)
         {
             var reservation = await _context.Reservations.FindAsync(id);

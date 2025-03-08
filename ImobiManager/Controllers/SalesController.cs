@@ -1,6 +1,7 @@
 ﻿using ImobiManager.Data;
 using ImobiManager.DTO;
 using ImobiManager.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,12 +19,14 @@ namespace ImobiManager.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Sale>>> GetSales()
         {
             return await _context.Sales.ToListAsync();
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Sale>> GetSale(int id)
         {
             if (id == null)
@@ -42,6 +45,7 @@ namespace ImobiManager.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Sale>> PostSale(SaleDto saleDto)
         {
             var clientExists = await _context.Clients.AnyAsync(c => c.Id == saleDto.ClientId);
@@ -66,6 +70,7 @@ namespace ImobiManager.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutSale(int id, SaleDto saleDto)
         {
             var existingSale = await _context.Sales.FindAsync(id);
@@ -108,6 +113,7 @@ namespace ImobiManager.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteSale(int id)
         {
             var sale = await _context.Sales.FindAsync(id);
