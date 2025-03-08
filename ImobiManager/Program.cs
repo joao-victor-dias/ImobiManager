@@ -1,5 +1,6 @@
 using ImobiManager.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,8 +42,48 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    dbContext.Database.Migrate();
+
+    if (dbContext.Database.EnsureCreated())
+    {
+        dbContext.Database.Migrate();
+    }
 }
+
+//using (var scope = app.Services.CreateScope())
+//{
+//    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+//    try
+//    {
+//        // Verifica se existem migrations pendentes
+//        if (!dbContext.Database.GetMigrations().Any())
+//        {
+//            // Gera uma migration inicial automaticamente
+//            var process = new Process
+//            {
+//                StartInfo = new ProcessStartInfo
+//                {
+//                    FileName = "dotnet",
+//                    Arguments = "ef migrations add AutoMigration",
+//                    RedirectStandardOutput = true,
+//                    RedirectStandardError = true,
+//                    UseShellExecute = false,
+//                    CreateNoWindow = true
+//                }
+//            };
+
+//            process.Start();
+//            process.WaitForExit();
+//        }
+
+//        // Aplica as migrations (criando tabelas se necessário)
+//        dbContext.Database.Migrate();
+//    }
+//    catch (Exception ex)
+//    {
+//        Console.WriteLine($"Erro ao aplicar migrations: {ex.Message}");
+//    }
+//}
 
 app.UseHttpsRedirection();
 
@@ -51,3 +92,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

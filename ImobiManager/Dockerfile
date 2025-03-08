@@ -1,25 +1,32 @@
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+WORKDIR /src
 
-WORKDIR /app
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build_stage
+WORKDIR /src
 
 COPY *.csproj ./
 
 RUN dotnet restore
 
-RUN dotnet tool install --global dotnet-ef
-
 COPY . ./
+WORKDIR "/src/ImobiManager"
 
-RUN dotnet publish -c Release -o /app/publish
+FROM build_stage as migrations
 
-FROM mcr.microsoft.com/dotnet/sdk:9.0
-
-WORKDIR /app
-
-COPY --from=build /app/publish .
-
-RUN dotnet tool install --global dotnet-ef
-
+RUN dotnet tool install --global dotnet-ef --version 9.*
 ENV PATH="${PATH}:/root/.dotnet/tools"
 
-ENTRYPOINT ["sh", "-c", "dotnet ef database update && dotnet ImobiManager.dll"]
+RUN dotnet build  /src/ImobiManager.csproj -c Release -o /app/build
+
+RUN dotnet ef migrations add InitialMigration --project /src/ImobiManager.csproj || echo "Migration already exists"
+RUN dotnet ef database update
+
+FROM build_stage AS publish
+RUN dotnet publish  /src/ImobiManager.csproj -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
+WORKDIR /app
+
+COPY --from=publish /app/publish .
+
+ENTRYPOINT ["dotnet", "ImobiManager.dll"]

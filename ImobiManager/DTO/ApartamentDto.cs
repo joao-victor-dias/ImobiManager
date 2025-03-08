@@ -1,12 +1,11 @@
 ﻿using ImobiManager.Enums;
 
-namespace ImobiManager.Entities
+namespace ImobiManager.DTO
 {
-    public class Apartament
+    public class ApartamentDto
     {
-        public int Id { get; set; }
         public int Number { get; set; }
-        public string BlockOrTower { get; set; }        
+        public string BlockOrTower { get; set; }
         public int Floor { get; set; }
         public double Area { get; set; }
         public int Bedrooms { get; set; }
@@ -16,7 +15,5 @@ namespace ImobiManager.Entities
         public string Address { get; set; }
         public ApartmentStatus Status { get; set; }
         public string Description { get; set; }
-
-        public Reservation? Reservation { get; set; }
     }
 }

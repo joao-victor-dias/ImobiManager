@@ -21,6 +21,22 @@ namespace ImobiManager.Data
             modelBuilder.Entity<Reservation>().HasKey(r => r.Id);
             modelBuilder.Entity<Sale>().HasKey(s => s.Id);
 
+            modelBuilder.Entity<Client>()
+                .Property(c => c.Id)
+                .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Apartament>()
+                .Property(a => a.Id)
+                .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Reservation>()
+                .Property(r => r.Id)
+                .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Sale>()
+                .Property(s => s.Id)
+                .ValueGeneratedOnAdd();
+
 
             modelBuilder.Entity<Reservation>()
                .HasOne(r => r.Client)

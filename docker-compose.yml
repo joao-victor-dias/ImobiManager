@@ -1,3 +1,4 @@
+version: '3.8'
 services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -16,7 +17,7 @@ services:
       dockerfile: Dockerfile
     container_name: imobimanagerApi
     environment:
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=ImobiManager;User Id=sa;Password=Imobimanager2025;
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=ImobiManager;User Id=sa;Password=Imobimanager2025;TrustServerCertificate=True;
     ports:
       - "8080:8080"
     depends_on:
