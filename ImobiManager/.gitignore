@@ -48,3 +48,4 @@ publish/
 wwwroot/
 wwwroot/dist/
 coverage/
+/Migrations
