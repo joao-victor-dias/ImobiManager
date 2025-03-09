@@ -182,7 +182,7 @@ Este projeto implementa uma API para gerenciar vendas e reservas de apartamentos
 
   Exemplo de requisição:
 
-  ```json
+  ```
   curl -X POST http://localhost:8080/api/apartaments -H "Authorization: Bearer jwt-token" -H "Content-Type: application/json" -d '{
     "Number": 101, 
     "BlockOrTower": "A", 
