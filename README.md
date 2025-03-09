@@ -343,12 +343,12 @@ Este projeto implementa uma API para gerenciar vendas e reservas de apartamentos
 
 ### 12. Cadastrar Reserva
 
-- **POST** `/api/reservations`
+- **POST** `/api/reservation`
 
   Exemplo de requisição:
 
   ```
-  curl -X POST http://localhost:8080/api/reservations -H "Authorization: Bearer jwt-token" -H "Content-Type: application/json" -d '{
+  curl -X POST http://localhost:8080/api/reservation -H "Authorization: Bearer jwt-token" -H "Content-Type: application/json" -d '{
     "ClientId": 1,
     "ApartamentId": 1,
     "ReservationDate": "2025-03-10"
@@ -394,12 +394,12 @@ Este projeto implementa uma API para gerenciar vendas e reservas de apartamentos
 
 ### 13. Listar Reservas
 
-- **GET** `/api/reservations`
+- **GET** `/api/reservation`
 
   Exemplo de requisição:
 
   ```
-  curl -X GET http://localhost:8080/api/reservations -H "Authorization: Bearer jwt-token"
+  curl -X GET http://localhost:8080/api/reservation -H "Authorization: Bearer jwt-token"
   ```
   
   Exemplo de resposta (lista de reservas):
@@ -443,12 +443,12 @@ Este projeto implementa uma API para gerenciar vendas e reservas de apartamentos
 
 ### 14. Atualizar Reserva
 
-- **PUT** `/api/reservations/{id}`
+- **PUT** `/api/reservation/{id}`
 
   Exemplo de requisição:
 
   ```
-  curl -X PUT http://localhost:8080/api/reservations/1 -H "Authorization: Bearer jwt-token" -H "Content-Type: application/json" -d '{
+  curl -X PUT http://localhost:8080/api/reservation/1 -H "Authorization: Bearer jwt-token" -H "Content-Type: application/json" -d '{
     "ClientId": 1,
     "ApartamentId": 1,
     "ReservationDate": "2025-03-15T15:30:00"
@@ -462,7 +462,7 @@ Este projeto implementa uma API para gerenciar vendas e reservas de apartamentos
 
 ### 15. Deletar Reserva
 
-- **DELETE** `/api/reservations/{id}`
+- **DELETE** `/api/reservation/{id}`
 
   Exemplo de requisição:
 
@@ -482,12 +482,12 @@ Este projeto implementa uma API para gerenciar vendas e reservas de apartamentos
 
 ### 16. Buscar Reserva por ID
 
-- **GET** `/api/reservations/{id}`
+- **GET** `/api/reservation/{id}`
 
   Exemplo de requisição:
 
   ```
-  curl -X GET http://localhost:8080/api/reservations/1 -H "Authorization: Bearer jwt-token"
+  curl -X GET http://localhost:8080/api/reservation/1 -H "Authorization: Bearer jwt-token"
   ```
   
   Exemplo de resposta (se a reserva for encontrada):
