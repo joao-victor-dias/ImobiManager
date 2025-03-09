@@ -467,7 +467,7 @@ Este projeto implementa uma API para gerenciar vendas e reservas de apartamentos
   Exemplo de requisição:
 
   ```
-  curl -X DELETE http://localhost:8080/api/reservations/1 -H "Authorization: Bearer jwt-token"
+  curl -X DELETE http://localhost:8080/api/reservation/1 -H "Authorization: Bearer jwt-token"
   ```
   
   Exemplo de resposta (reserva excluída com sucesso):
