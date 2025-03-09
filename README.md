@@ -472,7 +472,7 @@ Este projeto implementa uma API para gerenciar vendas e reservas de apartamentos
   
   Exemplo de resposta (reserva excluída com sucesso):
   
-  ```
+  ```json
   {
     "message": "Reserva excluída com sucesso."
   }
