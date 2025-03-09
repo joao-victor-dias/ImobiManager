@@ -78,21 +78,20 @@ namespace ImobiManager.Controllers
         [Authorize]
         public async Task<IActionResult> PutClient(int id, ClientDto clientDto)
         {
-            var client = new Client
-            {
-                Name = clientDto.Name,
-                CpfCnpj = clientDto.CpfCnpj,
-                IsCompany = clientDto.IsCompany,
-                DateOfBirth = clientDto.DateOfBirth,
-                Email = clientDto.Email,
-                Phone = clientDto.Phone,
-                Address = clientDto.Address
-            };
+            var client = await _context.Clients.FindAsync(id);
 
-            if (id != client.Id)
+            if (client == null)
             {
-                return BadRequest();
+                return NotFound();
             }
+
+            client.Name = clientDto.Name;
+            client.CpfCnpj = clientDto.CpfCnpj;
+            client.IsCompany = clientDto.IsCompany;
+            client.DateOfBirth = clientDto.DateOfBirth;
+            client.Email = clientDto.Email;
+            client.Phone = clientDto.Phone;
+            client.Address = clientDto.Address;            
 
             _context.Entry(client).State = EntityState.Modified;
             await _context.SaveChangesAsync();

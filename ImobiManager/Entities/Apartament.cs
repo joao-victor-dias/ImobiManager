@@ -1,4 +1,5 @@
 ﻿using ImobiManager.Enums;
+using System.Text.Json.Serialization;
 
 namespace ImobiManager.Entities
 {
@@ -17,6 +18,9 @@ namespace ImobiManager.Entities
         public ApartmentStatus Status { get; set; }
         public string Description { get; set; }
 
+        [JsonIgnore]
         public Reservation? Reservation { get; set; }
+        [JsonIgnore]
+        public Sale? Sale { get; set; }
     }
 }

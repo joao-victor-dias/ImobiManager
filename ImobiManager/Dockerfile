@@ -18,7 +18,6 @@ ENV PATH="${PATH}:/root/.dotnet/tools"
 
 RUN dotnet build  /src/ImobiManager.csproj -c Release -o /app/build
 
-RUN dotnet ef migrations add InitialMigration --project /src/ImobiManager.csproj || echo "Migration already exists"
 RUN dotnet ef database update
 
 FROM build_stage AS publish
@@ -28,5 +27,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
 
 COPY --from=publish /app/publish .
+
+EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "ImobiManager.dll"]

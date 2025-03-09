@@ -71,32 +71,36 @@ namespace ImobiManager.Controllers
             _context.Apartaments.Add(apartament);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetApartament", new { id = apartament.Id }, apartament);
+            var apartamentWithDetails = await _context.Apartaments
+                .Include(a => a.Reservation)
+                .Include(a => a.Sale)
+                .FirstOrDefaultAsync(a => a.Id == apartament.Id);
+
+            return CreatedAtAction("GetApartament", new { id = apartament.Id }, apartamentWithDetails);
         }
 
         [HttpPut("{id}")]
         [Authorize]
         public async Task<IActionResult> PutApartament(int id, ApartamentDto apartamentDto)
         {
-            var apartament = new Apartament
-            {
-                Number = apartamentDto.Number,
-                BlockOrTower = apartamentDto.BlockOrTower,
-                Floor = apartamentDto.Floor,
-                Area = apartamentDto.Area,
-                Bedrooms = apartamentDto.Bedrooms,
-                Bathrooms = apartamentDto.Bathrooms,
-                GarageSpaces = apartamentDto.GarageSpaces,
-                Price = apartamentDto.Price,
-                Address = apartamentDto.Address,
-                Status = apartamentDto.Status,
-                Description = apartamentDto.Description
-            };
+            var apartament = await _context.Apartaments.FindAsync(id);
 
-            if (id != apartament.Id)
+            if (apartament == null)
             {
-                return BadRequest();
+                return NotFound();
             }
+
+            apartament.Number = apartamentDto.Number;
+            apartament.BlockOrTower = apartamentDto.BlockOrTower;
+            apartament.Floor = apartamentDto.Floor;
+            apartament.Area = apartamentDto.Area;
+            apartament.Bedrooms = apartamentDto.Bedrooms;
+            apartament.Bathrooms = apartamentDto.Bathrooms;
+            apartament.GarageSpaces = apartamentDto.GarageSpaces;
+            apartament.Price = apartamentDto.Price;
+            apartament.Address = apartamentDto.Address;
+            apartament.Status = apartamentDto.Status;
+            apartament.Description = apartamentDto.Description;
 
             _context.Entry(apartament).State = EntityState.Modified;
             await _context.SaveChangesAsync();

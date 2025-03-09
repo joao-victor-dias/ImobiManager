@@ -22,19 +22,22 @@ namespace ImobiManager.Controllers
         [Authorize]
         public async Task<ActionResult<IEnumerable<Sale>>> GetSales()
         {
-            return await _context.Sales.ToListAsync();
+            var sales = await _context.Sales
+                .Include(s => s.Client)   
+                .Include(s => s.Apartament) 
+                .ToListAsync();
+
+            return sales;
         }
 
         [HttpGet("{id}")]
         [Authorize]
         public async Task<ActionResult<Sale>> GetSale(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var sale = await _context.Sales.FindAsync(id);
+            var sale = await _context.Sales
+                .Include(s => s.Client)    
+                .Include(s => s.Apartament) 
+                .FirstOrDefaultAsync(s => s.Id == id);
 
             if (sale == null)
             {
@@ -55,6 +58,24 @@ namespace ImobiManager.Controllers
             {
                 return BadRequest("Cliente ou Apartamento não encontrado.");
             }
+
+            var existingSale = await _context.Sales
+                .FirstOrDefaultAsync(s => s.ApartamentId == saleDto.ApartamentId);
+
+            if (existingSale != null)
+            {
+                return BadRequest("Este apartamento já foi vendido.");
+            }
+
+            var apartament = await _context.Apartaments.FindAsync(saleDto.ApartamentId);
+
+            if (apartament == null)
+            {
+                return BadRequest("Apartamento não encontrado.");
+            }
+
+            apartament.Status = (Enums.ApartmentStatus)2;  
+            _context.Entry(apartament).State = EntityState.Modified;
 
             var sale = new Sale
             {
@@ -91,6 +112,31 @@ namespace ImobiManager.Controllers
             existingSale.ApartamentId = saleDto.ApartamentId;
             existingSale.SaleDate = saleDto.SaleDate;
 
+            var existingReservation = await _context.Reservations
+                .FirstOrDefaultAsync(r => r.ApartamentId == saleDto.ApartamentId);
+
+            var currentApartament = await _context.Apartaments.FindAsync(saleDto.ApartamentId);
+            if (currentApartament != null)
+            {
+                if (existingReservation != null)
+                {
+                    currentApartament.Status = Enums.ApartmentStatus.Reserved;
+                }
+                else
+                {
+                    currentApartament.Status = Enums.ApartmentStatus.Available;
+                }
+
+                _context.Entry(currentApartament).State = EntityState.Modified;
+            }
+
+            var newApartament = await _context.Apartaments.FindAsync(saleDto.ApartamentId);
+            if (newApartament != null)
+            {
+                newApartament.Status = Enums.ApartmentStatus.Sold;
+                _context.Entry(newApartament).State = EntityState.Modified;
+            }
+
             _context.Entry(existingSale).State = EntityState.Modified;
 
             try
@@ -112,6 +158,7 @@ namespace ImobiManager.Controllers
             return NoContent();
         }
 
+
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<IActionResult> DeleteSale(int id)
@@ -122,10 +169,28 @@ namespace ImobiManager.Controllers
                 return NotFound();
             }
 
+            var apartment = await _context.Apartaments.FindAsync(sale.ApartamentId);
+            if (apartment != null)
+            {
+                var existingReservation = await _context.Reservations
+                    .FirstOrDefaultAsync(r => r.ApartamentId == sale.ApartamentId);
+
+                if (existingReservation != null)
+                {
+                    apartment.Status = Enums.ApartmentStatus.Reserved; 
+                }
+                else
+                {
+                    apartment.Status = Enums.ApartmentStatus.Available; 
+                }
+
+                _context.Entry(apartment).State = EntityState.Modified;
+            }
+
             _context.Sales.Remove(sale);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new { message = "Venda excluída com sucesso." });
         }
     }
 }

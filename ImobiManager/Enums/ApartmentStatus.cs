@@ -2,8 +2,8 @@
 {
     public enum ApartmentStatus
     {
-        Disponivel,
-        Reservado,
-        Vendido
+        Available,
+        Reserved,
+        Sold
     }
 }

@@ -58,9 +58,11 @@ namespace ImobiManager.Data
 
             modelBuilder.Entity<Sale>()
                 .HasOne(s => s.Apartament)
-                .WithOne()
+                .WithOne(a => a.Sale)  // Agora está explicitamente vinculado à propriedade Sale em Apartament
                 .HasForeignKey<Sale>(s => s.ApartamentId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+
         }
     }
 }
